@@ -33,7 +33,11 @@ func CreateUser(c *fiber.Ctx) error {
 
 	//use the validator library to validate required fields
 	if validationErr := validate.Struct(&user); validationErr != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"status": http.StatusBadRequest, "message": "error", "result": &fiber.Map{"data": validationErr.Error()}})
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"status":  http.StatusBadRequest,
+			"message": "error",
+			"result":  validationErr.Error(),
+		})
 	}
 
 	newUser := models.User{
@@ -45,7 +49,11 @@ func CreateUser(c *fiber.Ctx) error {
 
 	result, err := userCollection.InsertOne(ctx, newUser)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "message": "error", "result": &fiber.Map{"data": err.Error()}})
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"status":  http.StatusInternalServerError,
+			"message": "error",
+			"result":  err.Error(),
+		})
 
 	}
 
@@ -67,7 +75,11 @@ func GetAUser(c *fiber.Ctx) error {
 	err := userCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&user)
 
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "message": "error", "result": &fiber.Map{"data": err.Error()}})
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"status":  http.StatusInternalServerError,
+			"message": "error",
+			"result":  err.Error(),
+		})
 	}
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{
@@ -87,12 +99,20 @@ func EditAUser(c *fiber.Ctx) error {
 
 	//validate the request body
 	if err := c.BodyParser(&user); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"status": http.StatusBadRequest, "message": "error", "result": &fiber.Map{"data": err.Error()}})
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"status":  http.StatusBadRequest,
+			"message": "error",
+			"result":  err.Error(),
+		})
 	}
 
 	//use the validator library to validate required fields
 	if validationErr := validate.Struct(&user); validationErr != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"status": http.StatusBadRequest, "message": "error", "result": &fiber.Map{"data": validationErr.Error()}})
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"status":  http.StatusBadRequest,
+			"message": "error",
+			"result":  validationErr.Error(),
+		})
 	}
 
 	update := bson.M{"name": user.Name, "location": user.Location, "title": user.Title}
@@ -100,7 +120,11 @@ func EditAUser(c *fiber.Ctx) error {
 	result, err := userCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
 
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "message": "error", "result": &fiber.Map{"data": err.Error()}})
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"status":  http.StatusInternalServerError,
+			"message": "error",
+			"result":  err.Error(),
+		})
 	}
 
 	//get updated user details
@@ -109,7 +133,11 @@ func EditAUser(c *fiber.Ctx) error {
 		err := userCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&updatedUser)
 
 		if err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "message": "error", "result": &fiber.Map{"data": err.Error()}})
+			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"status":  http.StatusInternalServerError,
+				"message": "error",
+				"result":  err.Error(),
+			})
 		}
 	}
 
@@ -130,18 +158,26 @@ func DeleteAUser(c *fiber.Ctx) error {
 	result, err := userCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "message": "error", "result": &fiber.Map{"data": err.Error()}})
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"status":  http.StatusInternalServerError,
+			"message": "error",
+			"result":  err.Error(),
+		})
 	}
 
 	if result.DeletedCount < 1 {
-		return c.Status(http.StatusNotFound).JSON(
-			fiber.Map{"status": http.StatusNotFound, "message": "error", "result": &fiber.Map{"data": "User with specified ID not found!"}},
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+			"status":  http.StatusNotFound,
+			"message": "error",
+			"result":  "User with specified ID not found!"},
 		)
 	}
 
-	return c.Status(http.StatusOK).JSON(
-		fiber.Map{"status": http.StatusOK, "message": "success", "result": &fiber.Map{"data": "User successfully deleted!"}},
-	)
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  http.StatusOK,
+		"message": "success",
+		"result":  "User successfully deleted!",
+	})
 }
 
 func GetAllUsers(c *fiber.Ctx) error {
@@ -159,7 +195,11 @@ func GetAllUsers(c *fiber.Ctx) error {
 	results, err := userCollection.Find(ctx, bson.M{})
 
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "message": "error", "result": &fiber.Map{"data": err.Error()}})
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"status":  http.StatusInternalServerError,
+			"message": "error",
+			"result":  err.Error(),
+		})
 	}
 
 	//reading from the db in an optimal way
@@ -167,7 +207,11 @@ func GetAllUsers(c *fiber.Ctx) error {
 	for results.Next(ctx) {
 		var singleUser models.User
 		if err = results.Decode(&singleUser); err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "message": "error", "result": &fiber.Map{"data": err.Error()}})
+			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"status":  http.StatusInternalServerError,
+				"message": "error",
+				"result":  err.Error(),
+			})
 		}
 
 		users = append(users, singleUser)

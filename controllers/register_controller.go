@@ -66,7 +66,9 @@ func Register(c *fiber.Ctx) error {
 	for results.Next(ctx) {
 		var singleBusiness models.Business
 		if err = results.Decode(&singleBusiness); err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"error": err.Error(),
+			})
 		}
 
 		biz = append(biz, singleBusiness)
