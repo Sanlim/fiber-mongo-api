@@ -89,7 +89,7 @@ func createJwtToken(user models.UserPass) (MsgToken, error) {
 	claims["iss"] = os.Getenv("APP_NAME")
 	claims["sub"] = utils.UUIDv4()
 	claims["user"] = user.Username
-	claims["biz_id"] = user.BusinessId
+	claims["biz_id"] = user.Business_Id
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	t, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {

@@ -75,13 +75,13 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	newUser := models.UserPass{
-		Id:           primitive.NewObjectID(),
-		Username:     user.Username,
-		Password:     password,
-		BusinessName: biz[0].BusinessName,
-		BusinessId:   biz[0].BusinessId,
-		CreatedAt:    time.Now().UTC(),
-		UpdatedAt:    time.Now().UTC(),
+		Id:            primitive.NewObjectID(),
+		Username:      user.Username,
+		Password:      password,
+		Business_Name: biz[0].Business_Name,
+		Business_Id:   biz[0].Business_Id,
+		Created_At:    time.Now().UTC(),
+		Updated_At:    time.Now().UTC(),
 	}
 
 	result, err := userPassCollection.InsertOne(ctx, newUser)

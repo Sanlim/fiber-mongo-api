@@ -24,11 +24,11 @@ func CreateBusiness(c *fiber.Ctx) error {
 	defer cancel()
 
 	newBusiness := models.Business{
-		Id:           primitive.NewObjectID(),
-		BusinessName: bizInput.BusinessName,
-		BusinessId:   utils.UUIDv4(),
-		CreatedAt:    time.Now().UTC(),
-		UpdatedAt:    time.Now().UTC(),
+		Id:            primitive.NewObjectID(),
+		Business_Name: bizInput.BusinessName,
+		Business_Id:   utils.UUIDv4(),
+		Created_At:    time.Now().UTC(),
+		Updated_At:    time.Now().UTC(),
 	}
 
 	result, err := bizCollection.InsertOne(ctx, newBusiness)

@@ -42,12 +42,12 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 
 	newUser := models.User{
-		Id:        primitive.NewObjectID(),
-		Name:      user.Name,
-		Location:  user.Location,
-		Title:     user.Title,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		Id:         primitive.NewObjectID(),
+		Name:       user.Name,
+		Location:   user.Location,
+		Title:      user.Title,
+		Created_At: time.Now(),
+		Updated_At: time.Now(),
 	}
 
 	result, err := userCollection.InsertOne(ctx, newUser)
@@ -158,7 +158,7 @@ func DeleteAUser(c *fiber.Ctx) error {
 
 	objId, _ := primitive.ObjectIDFromHex(userId)
 
-	result, err := userCollection.DeleteOne(ctx, bson.M{"id": objId})
+	result, err := userCollection.DeleteOne(ctx, bson.M{"_id": objId})
 	fmt.Println("result: ", result)
 
 	if err != nil {
