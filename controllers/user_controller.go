@@ -158,7 +158,7 @@ func DeleteAUser(c *fiber.Ctx) error {
 
 	objId, _ := primitive.ObjectIDFromHex(userId)
 
-	result, err := userCollection.DeleteOne(ctx, bson.M{"_id": objId})
+	result, err := userCollection.DeleteOne(ctx, bson.M{"id": objId})
 	fmt.Println("result: ", result)
 
 	if err != nil {
