@@ -5,6 +5,7 @@ import (
 	"fiber-mongo-api/configs"
 	"fiber-mongo-api/helper"
 	"fiber-mongo-api/models"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -41,10 +42,12 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 
 	newUser := models.User{
-		Id:       primitive.NewObjectID(),
-		Name:     user.Name,
-		Location: user.Location,
-		Title:    user.Title,
+		Id:        primitive.NewObjectID(),
+		Name:      user.Name,
+		Location:  user.Location,
+		Title:     user.Title,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	result, err := userCollection.InsertOne(ctx, newUser)
@@ -115,7 +118,7 @@ func EditAUser(c *fiber.Ctx) error {
 		})
 	}
 
-	update := bson.M{"name": user.Name, "location": user.Location, "title": user.Title}
+	update := bson.M{"name": user.Name, "location": user.Location, "title": user.Title, "updated_at": time.Now()}
 
 	result, err := userCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
 
@@ -155,7 +158,8 @@ func DeleteAUser(c *fiber.Ctx) error {
 
 	objId, _ := primitive.ObjectIDFromHex(userId)
 
-	result, err := userCollection.DeleteOne(ctx, bson.M{"_id": objId})
+	result, err := userCollection.DeleteOne(ctx, bson.M{"id": objId})
+	fmt.Println("result: ", result)
 
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -190,6 +194,7 @@ func GetAllUsers(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var users []models.User
+	var count int64
 	defer cancel()
 
 	results, err := userCollection.Find(ctx, bson.M{})
@@ -215,11 +220,21 @@ func GetAllUsers(c *fiber.Ctx) error {
 		}
 
 		users = append(users, singleUser)
+		count++
+	}
+
+	if users == nil {
+		return c.Status(http.StatusOK).JSON(fiber.Map{
+			"results": "No user available",
+			"status":  http.StatusOK,
+			"message": "success",
+		})
 	}
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"results": users,
 		"status":  http.StatusOK,
 		"message": "success",
+		"total":   count,
 	})
 }
